@@ -102,10 +102,10 @@ public class Calculator extends JFrame implements ActionListener
 		tempUpperPanel2.setLayout(tempUpperLayout2);
 
 		// Initialize upper panel components
-		equationBuffer = new JLabel("buffer");
+		equationBuffer = new JLabel();
 		equationBuffer.setBorder(new EmptyBorder(0, 0, 0, 10));
 		equationBuffer.setHorizontalAlignment(SwingConstants.RIGHT);
-		currentInput = new JLabel("current");
+		currentInput = new JLabel("0");
 		currentInput.setBorder(new EmptyBorder(0, 0, 0, 10));
 		currentInput.setHorizontalAlignment(SwingConstants.RIGHT);
 		
@@ -311,78 +311,131 @@ public class Calculator extends JFrame implements ActionListener
 			}
 		}
 	}
+	
+	
+	String numToHexString(long number)
+	{		
+		return Long.toHexString(number);
+	}
+	
+	String numToDecimalString(long number)
+	{		
+		return Long.toString(number);
+	}
+	
+	String numToOctalString(long number)
+	{
+		return Long.toOctalString(number);
+	}
+	
+	String numToBinaryString(long number)
+	{
+		return Long.toBinaryString(number);
+	}
+	
+	boolean containsHexValues(String str) 
+	{
+		return str.contains("A") || str.contains("B") ||
+				str.contains("C") || str.contains("D") ||
+				str.contains("E") || str.contains("F");
+	}
+	
+	String convertStringHexToDec(String hexStr)
+	{
+		String digits = "0123456789ABCDEF";
 		
+		int val = 0;
+		 
+		for (int i = 0; i < hexStr.length(); i++)  
+		{  
+		    char c = hexStr.charAt(i);  
+		    int d = digits.indexOf(c);  
+		    val = 16*val + d;  
+		}  
+		
+		return val + "";  
+	}
+	
+	
+	void updateBaseValues()
+	{
+		String numString = currentInput.getText();
+		
+		if(containsHexValues(numString))
+			numString = convertStringHexToDec(numString);
+		
+		long number = Long.parseLong(numString);
+				
+		hexButton.setText("HEX   " + numToHexString(number));
+		decimalButton.setText("DEC   " + numToDecimalString(number));
+		octButton.setText("OCT   " + numToOctalString(number));
+		binaryButton.setText("BIN   " + numToBinaryString(number));
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
-		// Numeric buttons
-		if(e.getSource().equals(zero))
+		// Check if it's a numeric button
+		for(int i = 0; i < numericButtonArray.length; i++)
 		{
-			
+			if(e.getSource().equals(numericButtonArray[i]))
+			{
+				//equationBuffer.setText(equationBuffer.getText() + numericButtonArray[i].getText());
+				
+				if(currentInput.getText().equals("0"))
+				{
+					currentInput.setText("");
+				}
+				
+				currentInput.setText(currentInput.getText() + numericButtonArray[i].getText());
+			}
 		}
-		else if(e.getSource().equals(one))
+		
+		if(!currentInput.getText().equals("0"))	
 		{
-			
+			// Operator buttons
+			if(e.getSource().equals(add))
+			{
+				equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				equationBuffer.setText(equationBuffer.getText() + "+");
+				currentInput.setText("0");
+			}
+			else if(e.getSource().equals(subtract))
+			{
+				equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				equationBuffer.setText(equationBuffer.getText() + "-");
+				currentInput.setText("0");
+			}
+			else if(e.getSource().equals(multiply))
+			{
+				equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				equationBuffer.setText(equationBuffer.getText() + "*");
+				currentInput.setText("0");
+			}
+			else if(e.getSource().equals(divide))
+			{
+				equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				equationBuffer.setText(equationBuffer.getText() + "/");
+				currentInput.setText("0");
+			}
 		}
-		else if(e.getSource().equals(two))
+		
+		if(e.getSource().equals(openParen))
 		{
-			
-		}
-		else if(e.getSource().equals(three))
+			equationBuffer.setText(equationBuffer.getText() + "(");
+		}		
+		else if(e.getSource().equals(closeParen))
 		{
-			
+			equationBuffer.setText(equationBuffer.getText() + currentInput.getText() + ")");
+			// Solve whatever is in parenthesis
 		}
-		else if(e.getSource().equals(four))
+		else if(e.getSource().equals(equals))
 		{
-			
+			// Implement equation stack logic here
 		}
-		else if(e.getSource().equals(five))
-		{
-			
-		}
-		else if(e.getSource().equals(six))
-		{
-			
-		}
-		else if(e.getSource().equals(seven))
-		{
-			
-		}
-		else if(e.getSource().equals(eight))
-		{
-			
-		}
-		else if(e.getSource().equals(nine))
-		{
-			
-		}
-		else if(e.getSource().equals(hexA))
-		{
-			
-		}
-		else if(e.getSource().equals(hexB))
-		{
-			
-		}
-		else if(e.getSource().equals(hexC))
-		{
-			
-		}
-		else if(e.getSource().equals(hexD))
-		{
-			
-		}
-		else if(e.getSource().equals(hexE))
-		{
-			
-		}
-		else if(e.getSource().equals(hexF))
-		{
-			
-		}
-		// End numerics
+		// End operators
 		// Select Base Type Buttons
-		else if(e.getSource().equals(hexButton))
+		if(e.getSource().equals(hexButton))
 		{
 			modifyButtonsEnabled(0, 15, true);
 		}
@@ -402,18 +455,25 @@ public class Calculator extends JFrame implements ActionListener
 			modifyButtonsEnabled(0, 1, true);
 		}
 		// End base selection buttons
-		else if(e.getSource().equals(mod))
+		// Clear and delete buttons
+		else if(e.getSource().equals(buttonCE))
 		{
-			
+			currentInput.setText("0");
 		}
-		else if(e.getSource().equals(mod))
+		else if(e.getSource().equals(buttonC))
 		{
-			
+			currentInput.setText("0");
+			equationBuffer.setText("");
 		}
-		else if(e.getSource().equals(mod))
+		else if(e.getSource().equals(deleteRecent))
 		{
+			if(currentInput.getText().length() >= 1)
+				currentInput.setText(currentInput.getText().substring(0, currentInput.getText().length() - 1));
 			
+			if(currentInput.getText().length() == 0)
+				currentInput.setText("0");
 		}
+		// End clear and delete buttons
 		else if(e.getSource().equals(mod))
 		{
 			
@@ -435,5 +495,8 @@ public class Calculator extends JFrame implements ActionListener
 			
 		}
 		
+		
+		// Update Hex, Dec, Oct, and Bin values
+		updateBaseValues();
 	}
 }
