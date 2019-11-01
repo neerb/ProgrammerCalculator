@@ -407,7 +407,7 @@ public class Calculator extends JFrame implements ActionListener
 	
 	String convertStringBinaryToDec(String binStr)
 	{
-		String digits = "012345678";
+		String digits = "01";
 		
 		int val = 0;
 		 
