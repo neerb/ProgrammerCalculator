@@ -26,6 +26,19 @@ public class EquationSolver
 		return false;
 	}
 	
+	private boolean isHexChar(char c)
+	{
+		String digits = "ABCDEF";
+		
+		for(int i = 0; i < digits.length(); i++)
+		{
+			if(digits.charAt(i) == c)
+				return true;
+		}
+		
+		return false;
+	}
+	
 	private boolean isPlusMinus(char c)
 	{
 		return c == '+' || c == '-';
@@ -127,7 +140,7 @@ public class EquationSolver
 				operatorStack.push(currChar);
 			}
 			else if(isDigit(currChar))
-			{
+			{				
 				String numericString = "";
 				
 				while(i < expression.length() && isDigit(expression.charAt(i)))

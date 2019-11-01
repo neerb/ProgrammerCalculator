@@ -383,7 +383,39 @@ public class Calculator extends JFrame implements ActionListener
 		{  
 		    char c = hexStr.charAt(i);  
 		    int d = digits.indexOf(c);  
-		    val = 16*val + d;  
+		    val = 16 * val + d;  
+		}  
+		
+		return val + "";  
+	}
+	
+	String convertStringOctToDec(String octStr)
+	{
+		String digits = "012345678";
+		
+		int val = 0;
+		 
+		for (int i = 0; i < octStr.length(); i++)  
+		{  
+		    char c = octStr.charAt(i);  
+		    int d = digits.indexOf(c);  
+		    val = 8 * val + d;  
+		}  
+		
+		return val + "";  
+	}
+	
+	String convertStringBinaryToDec(String binStr)
+	{
+		String digits = "012345678";
+		
+		int val = 0;
+		 
+		for (int i = 0; i < binStr.length(); i++)  
+		{  
+		    char c = binStr.charAt(i);  
+		    int d = digits.indexOf(c);  
+		    val = 2 * val + d;  
 		}  
 		
 		return val + "";  
