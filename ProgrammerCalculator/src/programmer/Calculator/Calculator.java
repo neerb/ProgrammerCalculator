@@ -2,6 +2,7 @@ package programmer.Calculator;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import java.awt.*;
 
@@ -21,6 +22,12 @@ public class Calculator extends JFrame implements ActionListener
 	final JLabel equationBuffer;
 	final JLabel currentInput;
 	
+	final Font equationFont;
+	final Font inputFont;
+	
+	// Base Conversion Buttons
+	final LineBorder baseBorder;
+	final EmptyBorder normalBaseBorder;
 	final JButton hexButton;
 	final JButton decimalButton;
 	final JButton octButton;
@@ -73,8 +80,12 @@ public class Calculator extends JFrame implements ActionListener
 	final JButton and;
 	final JButton decimal;
 	
+	private boolean operatorPushedLast = false;
+	
 	int width = 400;
 	int height = 600;
+	
+	int totalParens = 0;
 	
 	
 	public Calculator()
@@ -102,22 +113,39 @@ public class Calculator extends JFrame implements ActionListener
 		tempUpperPanel2.setLayout(tempUpperLayout2);
 
 		// Initialize upper panel components
+		equationFont = new Font("Monospaced", Font.BOLD, 16);
+		inputFont = new Font("Monospaced", Font.BOLD, 36);
+		
 		equationBuffer = new JLabel();
+		equationBuffer.setFont(equationFont);
 		equationBuffer.setBorder(new EmptyBorder(0, 0, 0, 10));
 		equationBuffer.setHorizontalAlignment(SwingConstants.RIGHT);
 		currentInput = new JLabel("0");
+		currentInput.setFont(inputFont);
 		currentInput.setBorder(new EmptyBorder(0, 0, 0, 10));
 		currentInput.setHorizontalAlignment(SwingConstants.RIGHT);
 		
+		baseBorder = new LineBorder(Color.BLUE, 3);
+		normalBaseBorder = new EmptyBorder(0, 10, 0, 0);
+		
 		hexButton = new JButton("HEX   0");
+		hexButton.setFont(equationFont);
 		hexButton.setHorizontalAlignment(SwingConstants.LEFT);
 		decimalButton = new JButton("DEC   0");
+		decimalButton.setFont(equationFont);
 		decimalButton.setHorizontalAlignment(SwingConstants.LEFT);
 		octButton = new JButton("OCT   0");
+		octButton.setFont(equationFont);
 		octButton.setHorizontalAlignment(SwingConstants.LEFT);
 		binaryButton = new JButton("BIN   0");
+		binaryButton.setFont(equationFont);
 		binaryButton.setHorizontalAlignment(SwingConstants.LEFT);
-				
+		
+		hexButton.setBorder(normalBaseBorder);
+		decimalButton.setBorder(normalBaseBorder);
+		octButton.setBorder(normalBaseBorder);
+		binaryButton.setBorder(normalBaseBorder);
+
 		// Add components to upper panel
 		//upperPanel.add(new JLabel("Programmer"));
 		tempUpperPanel1.add(equationBuffer);
@@ -176,7 +204,7 @@ public class Calculator extends JFrame implements ActionListener
 		// Clear buttons
 		buttonCE = new JButton("CE");
 		buttonC = new JButton("C");
-		deleteRecent = new JButton("Bksp");
+		deleteRecent = new JButton("\u232b");
 		
 		//Unused buttons initialization
 		lsh= new JButton("Lsh");
@@ -299,6 +327,11 @@ public class Calculator extends JFrame implements ActionListener
 		
 		//setSize(width, height);		
 		setVisible(true);
+		
+		// By default, start on decimal
+		modifyButtonsEnabled(10, 15, false);
+		modifyButtonsEnabled(0, 9, true);
+		decimalButton.setBorder(baseBorder);
 	}
 	
 	void modifyButtonsEnabled(int low, int high, boolean modifier)
@@ -387,6 +420,12 @@ public class Calculator extends JFrame implements ActionListener
 					currentInput.setText("");
 				}
 				
+				if(operatorPushedLast)
+				{
+					currentInput.setText("");
+					operatorPushedLast = false;
+				}
+				
 				currentInput.setText(currentInput.getText() + numericButtonArray[i].getText());
 			}
 		}
@@ -396,74 +435,171 @@ public class Calculator extends JFrame implements ActionListener
 			// Operator buttons
 			if(e.getSource().equals(add))
 			{
-				equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				if(equationBuffer.getText().length() > 0)
+				{
+					if(equationBuffer.getText().charAt(equationBuffer.getText().length() - 1) != ')')
+						equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				}
+				else
+				{
+					equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				}
+				
 				equationBuffer.setText(equationBuffer.getText() + "+");
-				currentInput.setText("0");
+				operatorPushedLast = true;
 			}
 			else if(e.getSource().equals(subtract))
 			{
-				equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				if(equationBuffer.getText().length() > 0)
+				{
+					if(equationBuffer.getText().charAt(equationBuffer.getText().length() - 1) != ')')
+						equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				}
+				else
+				{
+					equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				}
+				
+					
 				equationBuffer.setText(equationBuffer.getText() + "-");
-				currentInput.setText("0");
+				operatorPushedLast = true;
 			}
 			else if(e.getSource().equals(multiply))
 			{
-				equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				if(equationBuffer.getText().length() > 0)
+				{
+					if(equationBuffer.getText().charAt(equationBuffer.getText().length() - 1) != ')')
+						equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				}
+				else
+				{
+					equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				}
+				
 				equationBuffer.setText(equationBuffer.getText() + "*");
-				currentInput.setText("0");
+				operatorPushedLast = true;
 			}
 			else if(e.getSource().equals(divide))
 			{
-				equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				if(equationBuffer.getText().length() > 0)
+				{
+					if(equationBuffer.getText().charAt(equationBuffer.getText().length() - 1) != ')')
+						equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				}
+				else
+				{
+					equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				}
+				
 				equationBuffer.setText(equationBuffer.getText() + "/");
-				currentInput.setText("0");
+				operatorPushedLast = true;
+			}
+			else if(e.getSource().equals(mod))
+			{
+				if(equationBuffer.getText().length() > 0)
+				{
+					if(equationBuffer.getText().charAt(equationBuffer.getText().length() - 1) != ')')
+						equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				}
+				else
+				{
+					equationBuffer.setText(equationBuffer.getText() + currentInput.getText());
+				}
+				
+				equationBuffer.setText(equationBuffer.getText() + "%");
+				operatorPushedLast = true;
 			}
 		}
 		
 		if(e.getSource().equals(openParen))
 		{
 			equationBuffer.setText(equationBuffer.getText() + "(");
+			openParen.setText("( [" + (++totalParens) + "]");
 		}		
-		else if(e.getSource().equals(closeParen))
+		else if(e.getSource().equals(closeParen) && totalParens > 0)
 		{
-			equationBuffer.setText(equationBuffer.getText() + currentInput.getText() + ")");
+			if(currentInput.getText().equals("0"))
+				equationBuffer.setText(equationBuffer.getText() + ")");
+			else
+				equationBuffer.setText(equationBuffer.getText() + currentInput.getText() + ")");
+			
+			totalParens--;
+			if(totalParens > 0)
+				openParen.setText("( [" + totalParens + "]");
+			else
+				openParen.setText("(");
 			// Solve whatever is in parenthesis
 		}
 		else if(e.getSource().equals(equals))
 		{
 			// Implement equation stack logic here
+			EquationSolver solver = new EquationSolver();
+			
+			String expression = equationBuffer.getText();
+			
+			if(expression.charAt(expression.length() - 1) != ')')
+			{
+				expression += currentInput.getText();
+			}
+			
+			long solved = solver.SolveExpression(expression);
+			
+			equationBuffer.setText("");
+			currentInput.setText(solved + "");
 		}
 		// End operators
 		// Select Base Type Buttons
 		if(e.getSource().equals(hexButton))
 		{
 			modifyButtonsEnabled(0, 15, true);
+			
+			hexButton.setBorder(baseBorder);
+			decimalButton.setBorder(normalBaseBorder);
+			octButton.setBorder(normalBaseBorder);
+			binaryButton.setBorder(normalBaseBorder);
 		}
 		else if(e.getSource().equals(decimalButton))
 		{
 			modifyButtonsEnabled(10, 15, false);
 			modifyButtonsEnabled(0, 9, true);
+			
+			hexButton.setBorder(normalBaseBorder);
+			decimalButton.setBorder(baseBorder);
+			octButton.setBorder(normalBaseBorder);
+			binaryButton.setBorder(normalBaseBorder);
 		}
 		else if(e.getSource().equals(octButton))
 		{
 			modifyButtonsEnabled(8, 15, false);
 			modifyButtonsEnabled(0, 7, true);
+			
+			hexButton.setBorder(normalBaseBorder);
+			decimalButton.setBorder(normalBaseBorder);
+			octButton.setBorder(baseBorder);
+			binaryButton.setBorder(normalBaseBorder);
 		}
 		else if(e.getSource().equals(binaryButton))
 		{
 			modifyButtonsEnabled(2, 15, false);
 			modifyButtonsEnabled(0, 1, true);
+			
+			hexButton.setBorder(normalBaseBorder);
+			decimalButton.setBorder(normalBaseBorder);
+			octButton.setBorder(normalBaseBorder);
+			binaryButton.setBorder(baseBorder);
 		}
 		// End base selection buttons
 		// Clear and delete buttons
 		else if(e.getSource().equals(buttonCE))
 		{
-			currentInput.setText("0");
+			currentInput.setText("0");			
 		}
 		else if(e.getSource().equals(buttonC))
 		{
 			currentInput.setText("0");
 			equationBuffer.setText("");
+			totalParens = 0;
+			openParen.setText("(");
 		}
 		else if(e.getSource().equals(deleteRecent))
 		{
@@ -494,8 +630,7 @@ public class Calculator extends JFrame implements ActionListener
 		{
 			
 		}
-		
-		
+
 		// Update Hex, Dec, Oct, and Bin values
 		updateBaseValues();
 	}
