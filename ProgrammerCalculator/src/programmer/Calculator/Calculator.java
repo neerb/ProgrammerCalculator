@@ -39,6 +39,9 @@ public class Calculator extends JFrame implements ActionListener
 	private boolean isOct = false;
 	private boolean isBin = false;
 	
+	// Numeric Size button
+	final JButton bitSizeButton;
+	
 	// Numeric button declared
 	JButton[] numericButtonArray;
 	final JButton zero;
@@ -94,6 +97,20 @@ public class Calculator extends JFrame implements ActionListener
 	int totalParens = 0;
 	
 	private String decimalEquation;
+	private int cycleBitSize = 1;
+	
+	private final long BYTE_UPPER_BOUND = 127;
+	private final long BYTE_LOWER_BOUND = -128;
+	
+	private final long WORD_UPPER_BOUND = 32767;
+	private final long WORD_LOWER_BOUND = -32768;
+	
+	private final long DWORD_UPPER_BOUND = 2147483647;
+	private final long DWORD_LOWER_BOUND = -2147483648;
+	
+	private final long QWORD_UPPER_BOUND = 9223372036854775807l;
+	private final long QWORD_LOWER_BOUND = -9223372036854775808l;
+
 	
 	public Calculator()
 	{
@@ -175,13 +192,17 @@ public class Calculator extends JFrame implements ActionListener
 		upperPanel.add(tempUpperPanel2);
 		
 		
-		
 		// Define lower layout components
 		lowerPanel = new JPanel();
 		lowerLayout = new GridLayout(6, 6);
 		lowerLayout.setHgap(3);
 		lowerLayout.setVgap(3);
 		lowerPanel.setLayout(lowerLayout);
+		
+		// Bit size buttons
+		bitSizeButton = new JButton("WORD");
+		bitSizeButton.setAlignmentX(CENTER_ALIGNMENT);
+		
 		
 		// Main use buttons - numbers
 		zero = new JButton("0");
@@ -201,7 +222,7 @@ public class Calculator extends JFrame implements ActionListener
 		hexE = new JButton("E");
 		hexF = new JButton("F");
 		
-		//operator buttons
+		// Operator buttons
 		divide = new JButton("÷");
 		multiply = new JButton("X");
 		subtract = new JButton("-");
@@ -220,7 +241,7 @@ public class Calculator extends JFrame implements ActionListener
 		buttonC = new JButton("C");
 		deleteRecent = new JButton("\u232b");
 		
-		//Unused buttons initialization
+		// Unused buttons initialization
 		lsh= new JButton("Lsh");
 		rsh = new JButton("Rsh");
 		or = new JButton("Or");
@@ -229,49 +250,59 @@ public class Calculator extends JFrame implements ActionListener
 		and = new JButton("And");
 		decimal = new JButton(".");
 		
+		JPanel tempPanelGrid = new JPanel();
+		tempPanelGrid.setLayout(lowerLayout);
+						
 		// Add components to lower panel
-		lowerPanel.add(lsh);
-		lowerPanel.add(rsh);
-		lowerPanel.add(or);
-		lowerPanel.add(xor);
-		lowerPanel.add(not);
-		lowerPanel.add(and);
-		lowerPanel.add(second);
-		lowerPanel.add(mod);
-		lowerPanel.add(buttonCE);
-		lowerPanel.add(buttonC);
-		lowerPanel.add(deleteRecent);
-		lowerPanel.add(divide);
-		lowerPanel.add(hexA);
-		lowerPanel.add(hexB);
-		lowerPanel.add(seven);
-		lowerPanel.add(eight);
-		lowerPanel.add(nine);
-		lowerPanel.add(multiply);
-		lowerPanel.add(hexC);
-		lowerPanel.add(hexD);
-		lowerPanel.add(four);
-		lowerPanel.add(five);
-		lowerPanel.add(six);
-		lowerPanel.add(subtract);
-		lowerPanel.add(hexE);
-		lowerPanel.add(hexF);
-		lowerPanel.add(one);
-		lowerPanel.add(two);
-		lowerPanel.add(three);
-		lowerPanel.add(add);
-		lowerPanel.add(openParen);
-		lowerPanel.add(closeParen);
-		lowerPanel.add(plusMinus);
-		lowerPanel.add(zero);
-		lowerPanel.add(decimal);
-		lowerPanel.add(equals);
+		lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.Y_AXIS));
+		lowerPanel.add(bitSizeButton);		
 		
+		tempPanelGrid.add(lsh);
+		tempPanelGrid.add(rsh);
+		tempPanelGrid.add(or);
+		tempPanelGrid.add(xor);
+		tempPanelGrid.add(not);
+		tempPanelGrid.add(and);
+		tempPanelGrid.add(second);
+		tempPanelGrid.add(mod);
+		tempPanelGrid.add(buttonCE);
+		tempPanelGrid.add(buttonC);
+		tempPanelGrid.add(deleteRecent);
+		tempPanelGrid.add(divide);
+		tempPanelGrid.add(hexA);
+		tempPanelGrid.add(hexB);
+		tempPanelGrid.add(seven);
+		tempPanelGrid.add(eight);
+		tempPanelGrid.add(nine);
+		tempPanelGrid.add(multiply);
+		tempPanelGrid.add(hexC);
+		tempPanelGrid.add(hexD);
+		tempPanelGrid.add(four);
+		tempPanelGrid.add(five);
+		tempPanelGrid.add(six);
+		tempPanelGrid.add(subtract);
+		tempPanelGrid.add(hexE);
+		tempPanelGrid.add(hexF);
+		tempPanelGrid.add(one);
+		tempPanelGrid.add(two);
+		tempPanelGrid.add(three);
+		tempPanelGrid.add(add);
+		tempPanelGrid.add(openParen);
+		tempPanelGrid.add(closeParen);
+		tempPanelGrid.add(plusMinus);
+		tempPanelGrid.add(zero);
+		tempPanelGrid.add(decimal);
+		tempPanelGrid.add(equals);
+		
+		lowerPanel.add(tempPanelGrid);
+
 		// Add Action listeners to buttons
 		hexButton.addActionListener(this);
 		decimalButton.addActionListener(this);
 		octButton.addActionListener(this);
 		binaryButton.addActionListener(this);
+		
+		bitSizeButton.addActionListener(this);
 		
 		second.addActionListener(this);
 		mod.addActionListener(this);
@@ -443,6 +474,14 @@ public class Calculator extends JFrame implements ActionListener
 		return val + "";  
 	}
 	
+	String addSpaces(String str, int interval)
+	{
+		String addedSpaces = "0";
+		
+
+		return str;
+	}
+	
 	
 	void updateBaseValues()
 	{
@@ -467,11 +506,12 @@ public class Calculator extends JFrame implements ActionListener
 			number = Long.parseLong(numString.toLowerCase(), 2);
 		}
 				
-		hexButton.setText("HEX   " + numToHexidecimalString(number).toUpperCase());
+		hexButton.setText("HEX   " + addSpaces(numToHexidecimalString(number).toUpperCase(), 4));
 		decimalButton.setText("DEC   " + numToDecimalString(number));
-		octButton.setText("OCT   " + numToOctalString(number));
-		binaryButton.setText("BIN   " + numToBinaryString(number));
+		octButton.setText("OCT   " + addSpaces(numToOctalString(number), 3));
+		binaryButton.setText("BIN   " + addSpaces(numToBinaryString(number), 4));
 	}
+	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) 
@@ -488,13 +528,57 @@ public class Calculator extends JFrame implements ActionListener
 					currentInput.setText("");
 				}
 				
+				
 				if(operatorPushedLast)
 				{
 					currentInput.setText("");
 					operatorPushedLast = false;
 				}
 				
-				currentInput.setText(currentInput.getText() + numericButtonArray[i].getText());
+				
+				long tempNum = 0;
+				boolean inRange = true;
+				String currentBitSize = bitSizeButton.getText();
+				
+				if(isHex)
+				{
+					tempNum = Long.parseLong((currentInput.getText() + numericButtonArray[i].getText()).toLowerCase(), 16);
+				}
+				else if(isDec)
+				{
+					tempNum = Long.parseLong((currentInput.getText() + numericButtonArray[i].getText()).toLowerCase(), 10);
+				}
+				else if(isOct)
+				{
+					tempNum = Long.parseLong((currentInput.getText() + numericButtonArray[i].getText()).toLowerCase(), 8);
+				}
+				else if(isBin)
+				{
+					tempNum = Long.parseLong((currentInput.getText() + numericButtonArray[i].getText()).toLowerCase(), 2);
+				}
+				
+				switch(currentBitSize)
+				{
+				case "BYTE":
+					if(tempNum < BYTE_LOWER_BOUND || tempNum > BYTE_UPPER_BOUND)
+						inRange = false;
+					break;
+				case "WORD":
+					if(tempNum < WORD_LOWER_BOUND || tempNum > WORD_UPPER_BOUND)
+						inRange = false;
+					break;
+				case "DWORD":
+					if(tempNum < DWORD_LOWER_BOUND || tempNum > DWORD_UPPER_BOUND)
+						inRange = false;
+					break;
+				case "QWORD":
+					if(tempNum < QWORD_LOWER_BOUND || tempNum > QWORD_UPPER_BOUND)
+						inRange = false;
+					break;
+				}
+				
+				if(inRange)
+					currentInput.setText(currentInput.getText() + numericButtonArray[i].getText());
 			}
 		}
 		
@@ -802,8 +886,32 @@ public class Calculator extends JFrame implements ActionListener
 			
 			System.out.println(decimalEquation);
 			
+			if(expression.charAt(0) == '-')
+			{
+				expression = "0" + expression;
+			}
+			
 			long solved = solver.SolveExpression(expression);
 			String convertedValue = "";
+			String currentBitSize = bitSizeButton.getText();
+			
+			Long longObject = new Long(solved);
+			
+			switch(currentBitSize)
+			{
+			case "BYTE":
+				solved = longObject.byteValue();
+				break;
+			case "WORD":
+				solved = longObject.shortValue();
+				break;
+			case "DWORD":
+				solved = longObject.intValue();
+				break;
+			case "QWORD":
+				solved = longObject.longValue();
+				break;
+			}
 			
 			if(isHex)
 			{
@@ -943,25 +1051,28 @@ public class Calculator extends JFrame implements ActionListener
 				currentInput.setText("0");
 		}
 		// End clear and delete buttons
-		else if(e.getSource().equals(mod))
+		else if(e.getSource().equals(bitSizeButton))
 		{
+			if(cycleBitSize >= 3)
+				cycleBitSize = 0;
+			else
+				cycleBitSize++;
 			
-		}
-		else if(e.getSource().equals(mod))
-		{
-			
-		}
-		else if(e.getSource().equals(mod))
-		{
-			
-		}
-		else if(e.getSource().equals(mod))
-		{
-			
-		}
-		else if(e.getSource().equals(mod))
-		{
-			
+			switch(cycleBitSize)
+			{
+			case 0:
+				bitSizeButton.setText("BYTE");
+				break;
+			case 1:
+				bitSizeButton.setText("WORD");
+				break;
+			case 2:
+				bitSizeButton.setText("DWORD");
+				break;
+			case 3:
+				bitSizeButton.setText("QWORD");
+				break;
+			}
 		}
 
 		// Update Hex, Dec, Oct, and Bin values

@@ -124,8 +124,7 @@ public class EquationSolver
 					processOperator();
 				}
 				
-				System.out.println("Expression " + currChar);
-
+				System.out.println("Operator " + currChar);
 				
 				operatorStack.push(currChar);
 			}
@@ -149,7 +148,6 @@ public class EquationSolver
 					
 					System.out.println(expression.charAt(i) + "");
 
-					
 					i++;
 				}
 				
