@@ -734,14 +734,37 @@ public class Calculator extends JFrame implements ActionListener
 		if(e.getSource().equals(openParen))
 		{
 			equationBuffer.setText(equationBuffer.getText() + "(");
+			decimalEquation = decimalEquation + "(";
 			openParen.setText("( [" + (++totalParens) + "]");
 		}		
 		else if(e.getSource().equals(closeParen) && totalParens > 0)
 		{
 			if(currentInput.getText().equals("0"))
+			{
 				equationBuffer.setText(equationBuffer.getText() + ")");
+				decimalEquation = decimalEquation + ")";
+			}
 			else
+			{
 				equationBuffer.setText(equationBuffer.getText() + currentInput.getText() + ")");
+				
+				if(isHex)
+				{
+					decimalEquation = decimalEquation + Long.parseLong(currentInput.getText().toLowerCase(), 16) + ")";
+				}
+				else if(isDec)
+				{
+					decimalEquation = decimalEquation + Long.parseLong(currentInput.getText().toLowerCase(), 10) + ")";
+				}
+				else if(isOct)
+				{
+					decimalEquation = decimalEquation + Long.parseLong(currentInput.getText().toLowerCase(), 8) + ")";
+				}
+				else if(isBin)
+				{
+					decimalEquation = decimalEquation + Long.parseLong(currentInput.getText().toLowerCase(), 2) + ")";
+				}
+			}
 			
 			totalParens--;
 			if(totalParens > 0)
