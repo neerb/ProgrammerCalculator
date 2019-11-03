@@ -2,12 +2,12 @@ package programmer.Calculator;
 
 import java.util.*;
 
-public class EquationSolver 
+public class ExpressionEvaluator 
 {
 	Stack<Character> operatorStack;
 	Stack<Long> operandStack;
 	
-	public EquationSolver()
+	public ExpressionEvaluator()
 	{
 		operatorStack = new Stack<Character>();
 		operandStack = new Stack<Long>();
