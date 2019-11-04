@@ -381,10 +381,15 @@ public class Calculator extends JFrame implements ActionListener
 		decimalButton.setBorder(baseBorder);
 		
 		
-		//setSize(width, height);		
-		setVisible(true);
+		pack();
 		
 		decimalEquation = "";
+	}
+	
+	// Show the calculator
+	public void showCalculator()
+	{
+		setVisible(true);
 	}
 	
 	void modifyButtonsEnabled(int low, int high, boolean modifier)
@@ -582,7 +587,6 @@ public class Calculator extends JFrame implements ActionListener
 	public void actionPerformed(ActionEvent e) 
 	{
 		String currentInputValue = removeSpaces(currentInput.getText());
-		System.out.println(currentInputValue);
 		
 		// Check if it's a numeric button
 		for(int i = 0; i < numericButtonArray.length; i++)
@@ -933,77 +937,80 @@ public class Calculator extends JFrame implements ActionListener
 			ExpressionEvaluator solver = new ExpressionEvaluator();
 			
 			String expression = decimalEquation;//equationBuffer.getText();
-						
-			if(expression.charAt(expression.length() - 1) != ')')
+				
+			if(expression.length() > 0)
 			{
+				if(expression.charAt(expression.length() - 1) != ')')
+				{
+					if(isHex)
+					{
+						expression += Long.parseLong(currentInputValue.toLowerCase(), 16);
+					}
+					else if(isDec)
+					{
+						expression += Long.parseLong(currentInputValue.toLowerCase());
+					}
+					else if(isOct)
+					{
+						expression += Long.parseLong(currentInputValue.toLowerCase(), 8);
+					}
+					else if(isBin)
+					{
+						expression += Long.parseLong(currentInputValue.toLowerCase(), 2);
+					}
+				}
+				
+				System.out.println(decimalEquation);
+				
+				if(expression.charAt(0) == '-')
+				{
+					expression = "0" + expression;
+				}
+				
+				long solved = solver.SolveExpression(expression);
+				String convertedValue = "";
+				String currentBitSize = bitSizeButton.getText();
+				
+				Long longObject = new Long(solved);
+				
+				switch(currentBitSize)
+				{
+				case "BYTE":
+					solved = longObject.byteValue();
+					break;
+				case "WORD":
+					solved = longObject.shortValue();
+					break;
+				case "DWORD":
+					solved = longObject.intValue();
+					break;
+				case "QWORD":
+					solved = longObject.longValue();
+					break;
+				}
+				
 				if(isHex)
 				{
-					expression += Long.parseLong(currentInputValue.toLowerCase(), 16);
+					convertedValue = numToHexidecimalString(solved);
 				}
 				else if(isDec)
 				{
-					expression += Long.parseLong(currentInputValue.toLowerCase());
+					convertedValue = solved + "";
 				}
 				else if(isOct)
 				{
-					expression += Long.parseLong(currentInputValue.toLowerCase(), 8);
+					convertedValue = numToOctalString(solved);
 				}
 				else if(isBin)
 				{
-					expression += Long.parseLong(currentInputValue.toLowerCase(), 2);
+					convertedValue = numToBinaryString(solved);
 				}
+				
+				operatorPushedLast = true;
+				equationBuffer.setText("");
+				decimalEquation = "";
+				currentInput.setText(convertedValue.toUpperCase());
 			}
-			
-			System.out.println(decimalEquation);
-			
-			if(expression.charAt(0) == '-')
-			{
-				expression = "0" + expression;
-			}
-			
-			long solved = solver.SolveExpression(expression);
-			String convertedValue = "";
-			String currentBitSize = bitSizeButton.getText();
-			
-			Long longObject = new Long(solved);
-			
-			switch(currentBitSize)
-			{
-			case "BYTE":
-				solved = longObject.byteValue();
-				break;
-			case "WORD":
-				solved = longObject.shortValue();
-				break;
-			case "DWORD":
-				solved = longObject.intValue();
-				break;
-			case "QWORD":
-				solved = longObject.longValue();
-				break;
-			}
-			
-			if(isHex)
-			{
-				convertedValue = numToHexidecimalString(solved);
-			}
-			else if(isDec)
-			{
-				convertedValue = solved + "";
-			}
-			else if(isOct)
-			{
-				convertedValue = numToOctalString(solved);
-			}
-			else if(isBin)
-			{
-				convertedValue = numToBinaryString(solved);
-			}
-			
-			operatorPushedLast = true;
-			equationBuffer.setText("");
-			decimalEquation = "";
-			currentInput.setText(convertedValue.toUpperCase());
 		}
 		// End operators
 		// Select Base Type Buttons
