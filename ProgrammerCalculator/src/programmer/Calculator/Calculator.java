@@ -431,6 +431,7 @@ public class Calculator extends JFrame implements ActionListener
 				str.contains("E") || str.contains("F");
 	}
 	
+	/*
 	String convertStringHexToDec(String hexStr)
 	{
 		String digits = "0123456789ABCDEF";
@@ -478,6 +479,7 @@ public class Calculator extends JFrame implements ActionListener
 		
 		return val + "";  
 	}
+	*/
 	
 	String addCharacter(String str, int interval, char c)
 	{
@@ -590,9 +592,16 @@ public class Calculator extends JFrame implements ActionListener
 			currentVal = Long.parseLong(current);
 			break;
 		}
+		
+		long exponentiation = 1;
+		
+		for(int i = 0; i < currentLength - 1; i++)
+		{
+			exponentiation *= 16;
+		}
 	
 		// Return current power + next recursion
-		return (long)(hex2Dec(next) + (currentVal * Math.pow(16, currentLength - 1)));
+		return (long)(hex2Dec(next) + (currentVal * exponentiation));
     }
 	
 	long oct2Dec(String octStr) 
@@ -604,14 +613,21 @@ public class Calculator extends JFrame implements ActionListener
 			return 0;
 		
 		// Get current oct digit of string
-		String current = octStr.substring(0, 1).toUpperCase();
+		String current = octStr.substring(0, 1);
 		long currentVal = Long.parseLong(current);
 
 		// Create a substring of all other bits
 		String next = octStr.substring(1);
+		
+		long exponentiation = 1;
+		
+		for(int i = 0; i < currentLength - 1; i++)
+		{
+			exponentiation *= 8;
+		}
 
 		// Return current power + next recursion
-		return (long)(oct2Dec(next) + (currentVal * Math.pow(8, currentLength - 1)));
+		return (long)(oct2Dec(next) + (currentVal * exponentiation));
     }
 	
     long bin2Dec(String binaryString)
@@ -628,8 +644,16 @@ public class Calculator extends JFrame implements ActionListener
 		// Create a substring of all other bits
 		String next = binaryString.substring(1);
 		
+		
+		long exponentiation = 1;
+		
+		for(int i = 0; i < currentLength - 1; i++)
+		{
+			exponentiation *= 2;
+		}
+		
 		// Return current power + next recursion
-		return (long)(bin2Dec(next) + (Long.parseLong(current) * Math.pow(2, currentLength - 1)));
+		return (long)(bin2Dec(next) + (Long.parseLong(current) * exponentiation));
     }
 	
 	void updateBaseValues()
@@ -662,7 +686,6 @@ public class Calculator extends JFrame implements ActionListener
 			number = Long.parseLong(numString.toLowerCase(), 2);
 		}
 		*/
-		
 		
 		if(isHex)
 		{
@@ -785,7 +808,7 @@ public class Calculator extends JFrame implements ActionListener
 				
 				if(isHex)
 				{
-					tempNum = Long.parseLong((currentInputValue + numericButtonArray[i].getText()).toLowerCase(), 16);
+					tempNum = hex2Dec((currentInputValue + numericButtonArray[i].getText()).toLowerCase());
 				}
 				else if(isDec)
 				{
@@ -793,11 +816,11 @@ public class Calculator extends JFrame implements ActionListener
 				}
 				else if(isOct)
 				{
-					tempNum = Long.parseLong((currentInputValue + numericButtonArray[i].getText()).toLowerCase(), 8);
+					tempNum = oct2Dec((currentInputValue + numericButtonArray[i].getText()).toLowerCase());
 				}
 				else if(isBin)
 				{
-					tempNum = Long.parseLong((currentInputValue + numericButtonArray[i].getText()).toLowerCase(), 2);
+					tempNum = bin2Dec((currentInputValue + numericButtonArray[i].getText()).toLowerCase());
 				}
 				
 				switch(currentBitSize)
