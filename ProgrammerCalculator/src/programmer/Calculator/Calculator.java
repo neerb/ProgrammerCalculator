@@ -644,7 +644,6 @@ public class Calculator extends JFrame implements ActionListener
 		// Create a substring of all other bits
 		String next = binaryString.substring(1);
 		
-		
 		long exponentiation = 1;
 		
 		for(int i = 0; i < currentLength - 1; i++)
