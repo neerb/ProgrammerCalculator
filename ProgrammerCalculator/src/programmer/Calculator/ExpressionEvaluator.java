@@ -26,19 +26,6 @@ public class ExpressionEvaluator
 		return false;
 	}
 	
-	private boolean isHexChar(char c)
-	{
-		String digits = "ABCDEF";
-		
-		for(int i = 0; i < digits.length(); i++)
-		{
-			if(digits.charAt(i) == c)
-				return true;
-		}
-		
-		return false;
-	}
-	
 	private boolean isPlusMinus(char c)
 	{
 		return c == '+' || c == '-';
@@ -58,17 +45,6 @@ public class ExpressionEvaluator
 	private boolean isCloseParenthesis(char c)
 	{
 		return c == ')';
-	}
-	
-	private int getOrderPrecedence(char c)
-	{
-		if(c == '*' || c == '/' || c == '%')
-			return 2;
-		else if(c == '+' || c == '-')
-			return 1;
-		// Parentheses
-		else
-			return 3;
 	}
 	
 	void processOperator()

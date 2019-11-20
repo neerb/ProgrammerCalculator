@@ -479,27 +479,27 @@ public class Calculator extends JFrame implements ActionListener
 		return val + "";  
 	}
 	
-	String addSpaces(String str, int interval)
+	String addCharacter(String str, int interval, char c)
 	{
-		String addedSpaces = "";
+		String addedCharacter = "";
 		int counter = 0;
 		
 		// Only add spaces if spaces don't exist already
-		if(interval > 0 && !str.contains(" "))
+		if(interval > 0 && !str.contains(Character.toString(c)))
 		{
 			for(int i = str.length() - 1; i >= 0; i--)
 			{
-				addedSpaces = str.charAt(i) + addedSpaces;
+				addedCharacter = str.charAt(i) + addedCharacter;
 				counter++;
 								
 				if(counter % interval == 0 && i != 0)
-					addedSpaces = " " + addedSpaces;
+					addedCharacter = c + addedCharacter;
 			}
 		}
 		else
 			return str;
 		
-		return addedSpaces;
+		return addedCharacter;
 	}
 	
 	String addZeros(String binaryString)
@@ -535,13 +535,13 @@ public class Calculator extends JFrame implements ActionListener
 		return newBinString;
 	}
 	
-	String removeSpaces(String str)
+	String removeCharacters(String str, char c)
 	{
 		String newStr = "";
 		
 		for(int i = 0; i < str.length(); i++)
 		{
-			if(str.charAt(i) != ' ')
+			if(str.charAt(i) != c)
 			{
 				newStr += str.charAt(i);
 			}
@@ -550,12 +550,101 @@ public class Calculator extends JFrame implements ActionListener
 		return newStr;
 	}
 	
+	long hex2Dec(String hexStr) 
+	{
+		int currentLength = hexStr.length();
+
+		// Base case, length <= 0
+		if (currentLength <= 0)
+			return 0;
+
+		// Get current hex digit of string
+		String current = hexStr.substring(0, 1).toUpperCase();
+		long currentVal = 0;
+
+		// Create a substring of all other bits
+		String next = hexStr.substring(1);
+
+		// Switch case for numeric values
+		switch (current) 
+		{
+		case "A":
+			currentVal = 10;
+			break;
+		case "B":
+			currentVal = 11;
+			break;
+		case "C":
+			currentVal = 12;
+			break;
+		case "D":
+			currentVal = 13;
+			break;
+		case "E":
+			currentVal = 14;
+			break;
+		case "F":
+			currentVal = 15;
+			break;
+		default:
+			currentVal = Long.parseLong(current);
+			break;
+		}
+	
+		// Return current power + next recursion
+		return (long)(hex2Dec(next) + (currentVal * Math.pow(16, currentLength - 1)));
+    }
+	
+	long oct2Dec(String octStr) 
+	{
+		int currentLength = octStr.length();
+		
+		// Base case, length <= 0
+		if (currentLength <= 0)
+			return 0;
+		
+		// Get current oct digit of string
+		String current = octStr.substring(0, 1).toUpperCase();
+		long currentVal = Long.parseLong(current);
+
+		// Create a substring of all other bits
+		String next = octStr.substring(1);
+
+		// Return current power + next recursion
+		return (long)(oct2Dec(next) + (currentVal * Math.pow(8, currentLength - 1)));
+    }
+	
+    long bin2Dec(String binaryString)
+    {
+		int currentLength = binaryString.length();
+		
+		// Base case, length <= 0
+		if(currentLength <= 0)
+		    return 0;
+		
+		// Get current bit of string
+		String current = binaryString.substring(0, 1);
+		
+		// Create a substring of all other bits
+		String next = binaryString.substring(1);
+		
+		// Return current power + next recursion
+		return (long)(bin2Dec(next) + (Long.parseLong(current) * Math.pow(2, currentLength - 1)));
+    }
+	
 	void updateBaseValues()
 	{
-		String numString = removeSpaces(currentInput.getText());
+		String numString = "";
+		
+		if(isDec)
+			numString = removeCharacters(currentInput.getText(), ',');
+		else
+			numString = removeCharacters(currentInput.getText(), ' ');
 
 		long number = 0;
 		
+		// Original code
+		/*
 		if(isHex)
 		{
 			number = Long.parseLong(numString.toLowerCase(), 16);
@@ -572,21 +661,101 @@ public class Calculator extends JFrame implements ActionListener
 		{
 			number = Long.parseLong(numString.toLowerCase(), 2);
 		}
+		*/
+		
+		
+		if(isHex)
+		{
+			number = hex2Dec(numString.toLowerCase());
+		}
+		else if(isDec)
+		{
+			number = Long.parseLong(numString.toLowerCase());
+		}
+		else if(isOct)
+		{
+			number = oct2Dec(numString.toLowerCase());
+		}
+		else if(isBin)
+		{
+			number = bin2Dec(numString.toLowerCase());
+		}
 				
-		hexButton.setText("HEX   " + addSpaces(numToHexidecimalString(number).toUpperCase(), 4));
-		decimalButton.setText("DEC   " + numToDecimalString(number));
-		octButton.setText("OCT   " + addSpaces(numToOctalString(number), 3));
-		binaryButton.setText("BIN   " + addSpaces(addZeros(numToBinaryString(number)), 4));
+		hexButton.setText("HEX   " + addCharacter(numToHexidecimalString(number).toUpperCase(), 4, ' '));
+		decimalButton.setText("DEC   " + addCharacter(numToDecimalString(number), 3, ','));
+		octButton.setText("OCT   " + addCharacter(numToOctalString(number), 3, ' '));
+		binaryButton.setText("BIN   " + addCharacter(addZeros(numToBinaryString(number)), 4, ' '));
 		
 		if(number == 0)
 			binaryButton.setText("BIN   0");
+	}
+	
+	void updateDecimalEquation()
+	{
+		String currentInputValue = "";
+		
+		if(isDec)
+			currentInputValue = removeCharacters(currentInput.getText(), ',');
+		else
+			currentInputValue = removeCharacters(currentInput.getText(), ' ');
+		
+		if(equationBuffer.getText().length() > 0)
+		{
+			if(equationBuffer.getText().charAt(equationBuffer.getText().length() - 1) != ')')
+			{
+				equationBuffer.setText(equationBuffer.getText() + currentInputValue);
+				
+				if(isHex)
+				{
+					decimalEquation = decimalEquation + hex2Dec(currentInputValue.toLowerCase());
+				}
+				else if(isDec)
+				{
+					decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 10);
+				}
+				else if(isOct)
+				{
+					decimalEquation = decimalEquation + oct2Dec(currentInputValue.toLowerCase());
+				}
+				else if(isBin)
+				{
+					decimalEquation = decimalEquation + bin2Dec(currentInputValue.toLowerCase());;
+				}
+			}
+		}
+		else
+		{
+			equationBuffer.setText(equationBuffer.getText() + currentInputValue);
+			
+			if(isHex)
+			{
+				decimalEquation = decimalEquation + hex2Dec(currentInputValue.toLowerCase());
+			}
+			else if(isDec)
+			{
+				decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 10);
+			}
+			else if(isOct)
+			{
+				decimalEquation = decimalEquation + oct2Dec(currentInputValue.toLowerCase());
+			}
+			else if(isBin)
+			{
+				decimalEquation = decimalEquation + bin2Dec(currentInputValue.toLowerCase());;
+			}
+		}
 	}
 	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
-		String currentInputValue = removeSpaces(currentInput.getText());
+		String currentInputValue = "";
+				
+		if(isDec)
+			currentInputValue = removeCharacters(currentInput.getText(), ',');
+		else
+			currentInputValue = removeCharacters(currentInput.getText(), ' ');
 		
 		// Check if it's a numeric button
 		for(int i = 0; i < numericButtonArray.length; i++)
@@ -661,51 +830,7 @@ public class Calculator extends JFrame implements ActionListener
 			// Operator buttons
 			if(e.getSource().equals(add))
 			{
-				if(equationBuffer.getText().length() > 0)
-				{
-					if(equationBuffer.getText().charAt(equationBuffer.getText().length() - 1) != ')')
-					{
-						equationBuffer.setText(equationBuffer.getText() + currentInputValue);
-						
-						if(isHex)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 16);
-						}
-						else if(isDec)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 10);
-						}
-						else if(isOct)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 8);
-						}
-						else if(isBin)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 2);
-						}
-					}
-				}
-				else
-				{
-					equationBuffer.setText(equationBuffer.getText() + currentInputValue);
-					
-					if(isHex)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 16);
-					}
-					else if(isDec)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 10);
-					}
-					else if(isOct)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 8);
-					}
-					else if(isBin)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 2);
-					}
-				}
+				updateDecimalEquation();
 				
 				equationBuffer.setText(equationBuffer.getText() + "+");
 				decimalEquation = decimalEquation + "+";
@@ -713,51 +838,7 @@ public class Calculator extends JFrame implements ActionListener
 			}
 			else if(e.getSource().equals(subtract))
 			{
-				if(equationBuffer.getText().length() > 0)
-				{
-					if(equationBuffer.getText().charAt(equationBuffer.getText().length() - 1) != ')')
-					{
-						equationBuffer.setText(equationBuffer.getText() + currentInputValue);
-						
-						if(isHex)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 16);
-						}
-						else if(isDec)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 10);
-						}
-						else if(isOct)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 8);
-						}
-						else if(isBin)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 2);
-						}
-					}
-				}
-				else
-				{
-					equationBuffer.setText(equationBuffer.getText() + currentInputValue);
-					
-					if(isHex)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 16);
-					}
-					else if(isDec)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 10);
-					}
-					else if(isOct)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 8);
-					}
-					else if(isBin)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 2);
-					}
-				}
+				updateDecimalEquation();
 				
 				equationBuffer.setText(equationBuffer.getText() + "-");
 				decimalEquation = decimalEquation + "-";
@@ -765,103 +846,15 @@ public class Calculator extends JFrame implements ActionListener
 			}
 			else if(e.getSource().equals(multiply))
 			{
-				if(equationBuffer.getText().length() > 0)
-				{
-					if(equationBuffer.getText().charAt(equationBuffer.getText().length() - 1) != ')')
-					{
-						equationBuffer.setText(equationBuffer.getText() + currentInputValue);
-						
-						if(isHex)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 16);
-						}
-						else if(isDec)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 10);
-						}
-						else if(isOct)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 8);
-						}
-						else if(isBin)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 2);
-						}
-					}
-				}
-				else
-				{
-					equationBuffer.setText(equationBuffer.getText() + currentInputValue);
-					
-					if(isHex)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 16);
-					}
-					else if(isDec)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 10);
-					}
-					else if(isOct)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 8);
-					}
-					else if(isBin)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 2);
-					}
-				}
-				
+				updateDecimalEquation();
+
 				equationBuffer.setText(equationBuffer.getText() + "*");
 				decimalEquation = decimalEquation + "*";
 				operatorPushedLast = true;
 			}
 			else if(e.getSource().equals(divide))
 			{
-				if(equationBuffer.getText().length() > 0)
-				{
-					if(equationBuffer.getText().charAt(equationBuffer.getText().length() - 1) != ')')
-					{
-						equationBuffer.setText(equationBuffer.getText() + currentInputValue);
-						
-						if(isHex)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 16);
-						}
-						else if(isDec)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 10);
-						}
-						else if(isOct)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 8);
-						}
-						else if(isBin)
-						{
-							decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 2);
-						}
-					}
-				}
-				else
-				{
-					equationBuffer.setText(equationBuffer.getText() + currentInputValue);
-					
-					if(isHex)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 16);
-					}
-					else if(isDec)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 10);
-					}
-					else if(isOct)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 8);
-					}
-					else if(isBin)
-					{
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 2);
-					}
-				}
+				updateDecimalEquation();
 				
 				equationBuffer.setText(equationBuffer.getText() + "/");
 				decimalEquation = decimalEquation + "/";
@@ -869,19 +862,7 @@ public class Calculator extends JFrame implements ActionListener
 			}
 			else if(e.getSource().equals(mod))
 			{
-				if(equationBuffer.getText().length() > 0)
-				{
-					if(equationBuffer.getText().charAt(equationBuffer.getText().length() - 1) != ')')
-					{
-						equationBuffer.setText(equationBuffer.getText() + currentInputValue);
-						decimalEquation = decimalEquation + Long.parseLong(currentInputValue, 16);
-					}
-				}
-				else
-				{
-					equationBuffer.setText(equationBuffer.getText() + currentInputValue);
-					decimalEquation = decimalEquation + Long.parseLong(currentInputValue, 16);
-				}
+				updateDecimalEquation();
 				
 				equationBuffer.setText(equationBuffer.getText() + "%");
 				decimalEquation = decimalEquation + "%";
@@ -908,7 +889,7 @@ public class Calculator extends JFrame implements ActionListener
 				
 				if(isHex)
 				{
-					decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 16) + ")";
+					decimalEquation = decimalEquation + hex2Dec(currentInputValue.toLowerCase()) + ")";
 				}
 				else if(isDec)
 				{
@@ -916,11 +897,11 @@ public class Calculator extends JFrame implements ActionListener
 				}
 				else if(isOct)
 				{
-					decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 8) + ")";
+					decimalEquation = decimalEquation + oct2Dec(currentInputValue.toLowerCase()) + ")";
 				}
 				else if(isBin)
 				{
-					decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 2) + ")";
+					decimalEquation = decimalEquation + bin2Dec(currentInputValue.toLowerCase()) + ")";
 				}
 			}
 			
@@ -944,7 +925,7 @@ public class Calculator extends JFrame implements ActionListener
 				{
 					if(isHex)
 					{
-						expression += Long.parseLong(currentInputValue.toLowerCase(), 16);
+						expression += hex2Dec(currentInputValue.toLowerCase());
 					}
 					else if(isDec)
 					{
@@ -952,11 +933,11 @@ public class Calculator extends JFrame implements ActionListener
 					}
 					else if(isOct)
 					{
-						expression += Long.parseLong(currentInputValue.toLowerCase(), 8);
+						expression += oct2Dec(currentInputValue.toLowerCase());
 					}
 					else if(isBin)
 					{
-						expression += Long.parseLong(currentInputValue.toLowerCase(), 2);
+						expression += bin2Dec(currentInputValue.toLowerCase());;
 					}
 				}
 				
@@ -1155,19 +1136,19 @@ public class Calculator extends JFrame implements ActionListener
 		
 		if(isHex)
 		{
-			currentInput.setText(addSpaces(currentInput.getText(), 4));
+			currentInput.setText(addCharacter(currentInput.getText(), 4, ' '));
 		}
 		else if(isDec)
 		{
-			currentInput.setText(addSpaces(currentInput.getText(), 0));
+			currentInput.setText(addCharacter(currentInput.getText(), 3, ','));
 		}
 		else if(isOct)
 		{
-			currentInput.setText(addSpaces(currentInput.getText(), 3));
+			currentInput.setText(addCharacter(currentInput.getText(), 3, ' '));
 		}
 		else if(isBin)
 		{
-			currentInput.setText(addSpaces(currentInput.getText(), 4));
+			currentInput.setText(addCharacter(currentInput.getText(), 4, ' '));
 			currentInput.setText(removeLeadingZeros(currentInput.getText()));
 		}
 
