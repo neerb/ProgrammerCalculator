@@ -1,6 +1,7 @@
 package programmer.Calculator;
 
 import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
@@ -24,6 +25,9 @@ public class Calculator extends JFrame implements ActionListener
 	
 	final Font equationFont;
 	final Font inputFont;
+	final Font buttonFont;
+	final Font conversionFont;
+	final Font nonImportantButtonsFont;
 	
 	// Base Conversion Buttons
 	final LineBorder baseBorder;
@@ -115,7 +119,6 @@ public class Calculator extends JFrame implements ActionListener
 	public Calculator()
 	{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setDefaultLookAndFeelDecorated(true);
 		this.setMinimumSize(new Dimension(width, height));
 		
 		this.setTitle("Programmer Calculator");
@@ -137,8 +140,11 @@ public class Calculator extends JFrame implements ActionListener
 		tempUpperPanel2.setLayout(tempUpperLayout2);
 
 		// Initialize upper panel components
-		equationFont = new Font("Monospaced", Font.BOLD, 16);
-		inputFont = new Font("Monospaced", Font.BOLD, 28);
+		equationFont = new Font("Segoe UI", Font.PLAIN, 16);
+		inputFont = new Font("Segoe UI", Font.BOLD, 28);
+		buttonFont = new Font("Segoe UI", Font.BOLD, 16);
+		conversionFont = new Font("Segoe UI", Font.BOLD, 16);
+		nonImportantButtonsFont = new Font("Segoe UI", Font.PLAIN, 14);
 		
 		equationBuffer = new JLabel();
 		equationBuffer.setFont(equationFont);
@@ -153,16 +159,16 @@ public class Calculator extends JFrame implements ActionListener
 		normalBaseBorder = new EmptyBorder(0, 10, 0, 0);
 		
 		hexButton = new JButton("HEX   0");
-		hexButton.setFont(equationFont);
+		hexButton.setFont(conversionFont);
 		hexButton.setHorizontalAlignment(SwingConstants.LEFT);
 		decimalButton = new JButton("DEC   0");
-		decimalButton.setFont(equationFont);
+		decimalButton.setFont(conversionFont);
 		decimalButton.setHorizontalAlignment(SwingConstants.LEFT);
 		octButton = new JButton("OCT   0");
-		octButton.setFont(equationFont);
+		octButton.setFont(conversionFont);
 		octButton.setHorizontalAlignment(SwingConstants.LEFT);
 		binaryButton = new JButton("BIN   0");
-		binaryButton.setFont(equationFont);
+		binaryButton.setFont(conversionFont);
 		binaryButton.setHorizontalAlignment(SwingConstants.LEFT);
 				
 		hexButton.setBorder(normalBaseBorder);
@@ -195,8 +201,8 @@ public class Calculator extends JFrame implements ActionListener
 		// Define lower layout components
 		lowerPanel = new JPanel();
 		lowerLayout = new GridLayout(6, 6);
-		lowerLayout.setHgap(3);
-		lowerLayout.setVgap(3);
+		lowerLayout.setHgap(2);
+		lowerLayout.setVgap(2);
 		lowerPanel.setLayout(lowerLayout);
 		
 		// Bit size buttons
@@ -206,49 +212,101 @@ public class Calculator extends JFrame implements ActionListener
 		
 		// Main use buttons - numbers
 		zero = new JButton("0");
+		zero.setFont(buttonFont);
+		
 		one = new JButton("1");
+		one.setFont(buttonFont);
+		
 		two = new JButton("2");
+		two.setFont(buttonFont);
+		
 		three = new JButton("3");
+		three.setFont(buttonFont);
+		
 		four = new JButton("4");
+		four.setFont(buttonFont);
+
 		five = new JButton("5");
+		five.setFont(buttonFont);
+
 		six = new JButton("6");
+		six.setFont(buttonFont);
+
 		seven = new JButton("7");
+		seven.setFont(buttonFont);
+
 		eight = new JButton("8");
+		eight.setFont(buttonFont);
+
 		nine = new JButton("9");
+		nine.setFont(buttonFont);
+
 		hexA = new JButton("A");
+		hexA.setFont(buttonFont);
+
 		hexB = new JButton("B");
+		hexB.setFont(buttonFont);
+
 		hexC = new JButton("C");
+		hexC.setFont(buttonFont);
+
 		hexD = new JButton("D");
+		hexD.setFont(buttonFont);
+
 		hexE = new JButton("E");
+		hexE.setFont(buttonFont);
+
 		hexF = new JButton("F");
+		hexF.setFont(buttonFont);
+
 		
 		// Operator buttons
 		divide = new JButton("÷");
-		multiply = new JButton("X");
+		divide.setFont(nonImportantButtonsFont);
+		multiply = new JButton("\u00D7");
+		multiply.setFont(nonImportantButtonsFont);
 		subtract = new JButton("-");
+		subtract.setFont(nonImportantButtonsFont);
 		add = new JButton("+");
+		add.setFont(nonImportantButtonsFont);
 		equals = new JButton("=");
+		equals.setFont(nonImportantButtonsFont);
 		openParen = new JButton("(");
+		openParen.setFont(nonImportantButtonsFont);
 		closeParen = new JButton(")");
+		closeParen.setFont(nonImportantButtonsFont);
 		
 		// Specials
 		second = new JButton("2nd");
+		second.setFont(nonImportantButtonsFont);
 		mod = new JButton("Mod");
+		mod.setFont(nonImportantButtonsFont);
 		plusMinus = new JButton("±");
+		plusMinus.setFont(nonImportantButtonsFont);
 
 		// Clear buttons
 		buttonCE = new JButton("CE");
+		buttonCE.setFont(nonImportantButtonsFont);
 		buttonC = new JButton("C");
-		deleteRecent = new JButton("\u232b");
-		
+		buttonC.setFont(nonImportantButtonsFont);
+		deleteRecent = new JButton("\u2190");
+		deleteRecent.setFont(nonImportantButtonsFont);
+
 		// Unused buttons initialization
-		lsh= new JButton("Lsh");
+		lsh = new JButton("Lsh");
+		lsh.setFont(nonImportantButtonsFont);
 		rsh = new JButton("Rsh");
+		rsh.setFont(nonImportantButtonsFont);
 		or = new JButton("Or");
+		or.setFont(nonImportantButtonsFont);
 		xor = new JButton("Xor");
+		xor.setFont(nonImportantButtonsFont);
 		not = new JButton("Not");
+		not.setFont(nonImportantButtonsFont);
 		and = new JButton("And");
+		and.setFont(nonImportantButtonsFont);
 		decimal = new JButton(".");
+		decimal.setFont(nonImportantButtonsFont);
 		
 		JPanel tempPanelGrid = new JPanel();
 		tempPanelGrid.setLayout(lowerLayout);
@@ -383,6 +441,24 @@ public class Calculator extends JFrame implements ActionListener
 		
 		pack();
 		
+		try {
+		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+		        if ("Nimbus".equals(info.getName())) {
+		            UIManager.setLookAndFeel(info.getClassName());
+		            break;
+		        }
+		    }
+		} catch (UnsupportedLookAndFeelException e) {
+		    // handle exception
+		} catch (ClassNotFoundException e) {
+		    // handle exception
+		} catch (InstantiationException e) {
+		    // handle exception
+		} catch (IllegalAccessException e) {
+		    // handle exception
+		}
+		
+		
 		decimalEquation = "";
 	}
 	
@@ -430,57 +506,7 @@ public class Calculator extends JFrame implements ActionListener
 				str.contains("C") || str.contains("D") ||
 				str.contains("E") || str.contains("F");
 	}
-	
-	/*
-	String convertStringHexToDec(String hexStr)
-	{
-		String digits = "0123456789ABCDEF";
-		
-		int val = 0;
-		 
-		for (int i = 0; i < hexStr.length(); i++)  
-		{  
-		    char c = hexStr.charAt(i);  
-		    int d = digits.indexOf(c);  
-		    val = 16 * val + d;  
-		}  
-		
-		return val + "";  
-	}
-	
-	String convertStringOctToDec(String octStr)
-	{
-		String digits = "012345678";
-		
-		int val = 0;
-		 
-		for (int i = 0; i < octStr.length(); i++)  
-		{  
-		    char c = octStr.charAt(i);  
-		    int d = digits.indexOf(c);  
-		    val = 8 * val + d;  
-		}  
-		
-		return val + "";  
-	}
-	
-	String convertStringBinaryToDec(String binStr)
-	{
-		String digits = "01";
-		
-		int val = 0;
-		 
-		for (int i = 0; i < binStr.length(); i++)  
-		{  
-		    char c = binStr.charAt(i);  
-		    int d = digits.indexOf(c);  
-		    val = 2 * val + d;  
-		}  
-		
-		return val + "";  
-	}
-	*/
-	
+
 	String addCharacter(String str, int interval, char c)
 	{
 		String addedCharacter = "";
@@ -1125,10 +1151,9 @@ public class Calculator extends JFrame implements ActionListener
 		}
 		else if(e.getSource().equals(deleteRecent))
 		{
-			if(currentInputValue.length() >= 1)
+			if(currentInputValue.length() > 1)
 				currentInput.setText(currentInputValue.substring(0, currentInputValue.length() - 1));
-			
-			if(currentInputValue.length() == 0)
+			else
 				currentInput.setText("0");
 		}
 		// End clear and delete buttons
