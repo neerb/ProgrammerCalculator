@@ -873,7 +873,7 @@ public class Calculator extends JFrame implements ActionListener
 			}
 		}
 		
-		if(!currentInputValue.equals("0"))	
+		//if(!currentInputValue.equals("0"))	
 		{
 			// Operator buttons
 			if(e.getSource().equals(add))
@@ -928,8 +928,16 @@ public class Calculator extends JFrame implements ActionListener
 		{
 			if(currentInputValue.equals("0"))
 			{
-				equationBuffer.setText(equationBuffer.getText() + ")");
-				decimalEquation = decimalEquation + ")";
+				if(totalParens > 1)
+				{
+					equationBuffer.setText(equationBuffer.getText() + ")");
+					decimalEquation = decimalEquation + ")";
+				}
+				else
+				{
+					equationBuffer.setText(equationBuffer.getText() + "0)");
+					decimalEquation = decimalEquation + "0)";
+				}
 			}
 			else
 			{
@@ -958,7 +966,6 @@ public class Calculator extends JFrame implements ActionListener
 				openParen.setText("( [" + totalParens + "]");
 			else
 				openParen.setText("(");
-			// Solve whatever is in parenthesis
 		}
 		else if(e.getSource().equals(equals))
 		{
@@ -987,6 +994,12 @@ public class Calculator extends JFrame implements ActionListener
 					{
 						expression += bin2Dec(currentInputValue.toLowerCase());;
 					}
+				}
+				
+				while(totalParens > 0)
+				{
+					expression += ")";
+					totalParens--;
 				}
 				
 				System.out.println(decimalEquation);
