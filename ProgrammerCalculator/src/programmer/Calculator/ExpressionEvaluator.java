@@ -68,11 +68,17 @@ public class ExpressionEvaluator
 		}
 		else if(operator == '/')
 		{
-			operandStack.push(operandTwo / operandOne);
+			if(operandOne != 0)
+				operandStack.push(operandTwo / operandOne);
+			else
+				operandStack.push(new Long(0));
 		}
 		else if(operator == '%')
 		{
-			operandStack.push(operandTwo % operandOne);
+			if(operandOne != 0)
+				operandStack.push(operandTwo % operandOne);
+			else
+				operandStack.push(new Long(0));			
 		}
 	}
 

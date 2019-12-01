@@ -10,6 +10,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class Calculator extends JFrame implements ActionListener
 {	
@@ -122,6 +124,7 @@ public class Calculator extends JFrame implements ActionListener
 		this.setMinimumSize(new Dimension(width, height));
 		
 		this.setTitle("Programmer Calculator");
+		
 		
 		//Define upper layout components
 		upperPanel = new JPanel(); 
@@ -437,10 +440,10 @@ public class Calculator extends JFrame implements ActionListener
 		modifyButtonsEnabled(10, 15, false);
 		modifyButtonsEnabled(0, 9, true);
 		decimalButton.setBorder(baseBorder);
-		
-		
+				
 		pack();
 		
+		// Set look and feel of buttons
 		try {
 		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 		        if ("Nimbus".equals(info.getName())) {
@@ -457,7 +460,6 @@ public class Calculator extends JFrame implements ActionListener
 		} catch (IllegalAccessException e) {
 		    // handle exception
 		}
-		
 		
 		decimalEquation = "";
 	}
