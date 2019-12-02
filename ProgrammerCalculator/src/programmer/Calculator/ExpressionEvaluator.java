@@ -9,10 +9,14 @@ public class ExpressionEvaluator
 	
 	public ExpressionEvaluator()
 	{
+		// Stack contains operators
 		operatorStack = new Stack<Character>();
+		
+		// Stack contains operands
 		operandStack = new Stack<Long>();
 	}
 	
+	// Checks if a character is a digit
 	private boolean isDigit(char c)
 	{
 		String digits = "0123456789ABCDEF";
@@ -26,27 +30,32 @@ public class ExpressionEvaluator
 		return false;
 	}
 	
+	// Checks if a character is an addition or subtraction operator
 	private boolean isPlusMinus(char c)
 	{
 		return c == '+' || c == '-';
 	}
 	
+	// Checks if a character is a quotient or multiplication operator
 	private boolean isMultDivOrMod(char c)
 	{
 		return 	c == '*' || c == '/' ||
 				c == '%';
 	}
 	
+	// Checks for open parenthesis
 	private boolean isOpenParenthesis(char c)
 	{
 		return c == '(';
 	}
 	
+	// Checks for close parenthesis
 	private boolean isCloseParenthesis(char c)
 	{
 		return c == ')';
 	}
 	
+	// Processes the current operator
 	void processOperator()
 	{
 		char operator = operatorStack.pop();
@@ -82,7 +91,7 @@ public class ExpressionEvaluator
 		}
 	}
 
-	
+	// Solves equation argument passed to parameter
 	public long SolveExpression(String expression)
 	{
 		System.out.println(expression);
@@ -93,9 +102,9 @@ public class ExpressionEvaluator
 		{
 			char currChar = expression.charAt(i);
 			
+			// Processes operators until the operator stack is empty
 			if(isPlusMinus(currChar))
 			{
-
 				while (!operatorStack.isEmpty() &&
 				          (operatorStack.peek() == '+' || 
 				           operatorStack.peek() == '-' ||
@@ -137,7 +146,6 @@ public class ExpressionEvaluator
 				
 				long toLong = Long.parseLong(numericString);
 				
-				//operandStack.add(toLong);
 				operandStack.push(toLong);
 				
 				System.out.println("Added to operand stack number " + toLong);
@@ -167,6 +175,7 @@ public class ExpressionEvaluator
 		operatorStack.clear();
 		operandStack.clear();
 		
+		// Returns solved equation
 		return result;
 	}
 }

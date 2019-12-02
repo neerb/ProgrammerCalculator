@@ -6,6 +6,8 @@ public class CalculatorMain
 	public static void main(String[] args)
 	{		
 		Calculator calc = new Calculator();
+		
+		// Displays calculator
 		calc.showCalculator();
 	}
 }
