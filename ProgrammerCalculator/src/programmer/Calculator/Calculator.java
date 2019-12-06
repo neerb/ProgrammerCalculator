@@ -960,23 +960,31 @@ public class Calculator extends JFrame implements ActionListener
 			}
 			else
 			{
-				equationBuffer.setText(equationBuffer.getText() + currentInputValue + ")");
-				
-				if(isHex)
+				if(equationBuffer.getText().charAt(equationBuffer.getText().length() - 1) != ')')
 				{
-					decimalEquation = decimalEquation + hex2Dec(currentInputValue.toLowerCase()) + ")";
+					equationBuffer.setText(equationBuffer.getText() + currentInputValue + ")");
+					
+					if(isHex)
+					{
+						decimalEquation = decimalEquation + hex2Dec(currentInputValue.toLowerCase()) + ")";
+					}
+					else if(isDec)
+					{
+						decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 10) + ")";
+					}
+					else if(isOct)
+					{
+						decimalEquation = decimalEquation + oct2Dec(currentInputValue.toLowerCase()) + ")";
+					}
+					else if(isBin)
+					{
+						decimalEquation = decimalEquation + bin2Dec(currentInputValue.toLowerCase()) + ")";
+					}
 				}
-				else if(isDec)
+				else
 				{
-					decimalEquation = decimalEquation + Long.parseLong(currentInputValue.toLowerCase(), 10) + ")";
-				}
-				else if(isOct)
-				{
-					decimalEquation = decimalEquation + oct2Dec(currentInputValue.toLowerCase()) + ")";
-				}
-				else if(isBin)
-				{
-					decimalEquation = decimalEquation + bin2Dec(currentInputValue.toLowerCase()) + ")";
+					equationBuffer.setText(equationBuffer.getText() + ")");
+					decimalEquation = decimalEquation + ")";
 				}
 			}
 			
